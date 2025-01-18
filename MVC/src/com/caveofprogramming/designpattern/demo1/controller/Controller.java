@@ -20,8 +20,8 @@ public class Controller {
     /**
      * The {@code Controller} constructor receives references to the {@code view} and
      * the {@code model}. This allows the {@code Controller} to interact with both components.
-     * @param view
-     * @param model
+     * @param view a reference to the {@code view}
+     * @param model a reference to the {@code model}
      */
     public Controller(View view, Model model) {
         this.view = view;

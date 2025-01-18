@@ -18,7 +18,7 @@ public class View extends JFrame {
     /**
      * The {@code View} constructor receives a reference to the {@code Model}
      * and that allows the {@code Model} to listen to the {@code View}.
-     * @param model
+     * @param model a reference to the model.
      */
     public View(Model model) {
         super("MVC Demo");  // The parent constructor (JFrame) accepts a title for the app.
