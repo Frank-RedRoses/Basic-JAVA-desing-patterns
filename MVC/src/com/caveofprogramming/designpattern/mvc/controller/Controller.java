@@ -1,7 +1,9 @@
-package com.caveofprogramming.designpattern.demo1.controller;
+package com.caveofprogramming.designpattern.mvc.controller;
 
-import com.caveofprogramming.designpattern.demo1.model.Model;
-import com.caveofprogramming.designpattern.demo1.view.View;
+import com.caveofprogramming.designpattern.mvc.model.Model;
+import com.caveofprogramming.designpattern.mvc.view.LoginFormEvent;
+import com.caveofprogramming.designpattern.mvc.view.LoginListener;
+import com.caveofprogramming.designpattern.mvc.view.View;
 
 /**
  * This class handles the business logic of the application.
@@ -13,7 +15,7 @@ import com.caveofprogramming.designpattern.demo1.view.View;
  * The {@code Controller} sends commands to both the View and the Model. It is
  * almost certainly listening to the View, but may or may not listen to the Model.
  */
-public class Controller {
+public class Controller implements LoginListener {
     private final Model model;
     private final View view;
 
@@ -26,5 +28,13 @@ public class Controller {
     public Controller(View view, Model model) {
         this.view = view;
         this.model = model;
+    }
+
+    /**
+     * This is the implementation of the method defined in the LoginListener interface
+     */
+    @Override
+    public void loginPerform(LoginFormEvent event) {
+        System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
     }
 }

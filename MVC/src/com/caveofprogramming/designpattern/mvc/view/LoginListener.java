@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.demo1.view;
+package com.caveofprogramming.designpattern.mvc.view;
 
 /**
  * This interface must be implemented by the Login Observer class.
