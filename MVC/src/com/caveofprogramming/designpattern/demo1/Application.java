@@ -29,16 +29,27 @@ public class Application {
         });
     }
 
-    // Inside this method we make use of the MVC pattern. The method's name does not matter.
+    /**
+     * This method utilizes the MVC pattern. The name of the method is not significant.</br>
+     * This code also implements the Observer pattern where the controller acts as the Observer,
+     * while the View serves as the Subject.
+     * When the User fills out the form and clicks the "OK" button, we want the View
+     * to trigger a login event to indicate the user is attempting to log in. The Controller
+     * is notified of this event and receives some information with this notification,
+     * which, in this particular case, includes the data entered into a form.
+      */
     private static void runApp() {
         Model model = new Model();
-        View view = new View(model);    // The model will listen to the view
+        View view = new View(model);    // The Model listens to the View.
+        /* The controller send commands to both the View and the Model. It almost certainly
+         * listens to the View, but may or may not listen to the Model. In this case, the code is
+         * likely to listen to the Model. */
         Controller controller = new Controller(view, model);
-        /* The controller send commands to the View and the Model, and it is almost certainly
-         * listening to the View, but may or may not listen to the Model. So, this code will
-         * probably be written as it listen to the model.
-         */
 
-        // To do: Implement the observer pattern to make the Controller listen to the View
+        // Implementation of the Observer pattern
+        view.setLoginListener(controller);
+        /* The controller is abstracted behind an interface, ensuring that the View and the Controller
+         * are not tightly coupled. */
+
     }
 }
