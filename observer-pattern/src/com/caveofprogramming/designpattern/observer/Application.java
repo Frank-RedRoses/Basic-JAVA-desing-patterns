@@ -1,8 +1,8 @@
-package com.caveofprogramming.designpattern.demo1;
+package com.caveofprogramming.designpattern.observer;
 
-import com.caveofprogramming.designpattern.demo1.controller.Controller;
-import com.caveofprogramming.designpattern.demo1.model.Model;
-import com.caveofprogramming.designpattern.demo1.view.View;
+import com.caveofprogramming.designpattern.observer.controller.Controller;
+import com.caveofprogramming.designpattern.observer.model.Model;
+import com.caveofprogramming.designpattern.observer.view.View;
 
 import javax.swing.*;
 

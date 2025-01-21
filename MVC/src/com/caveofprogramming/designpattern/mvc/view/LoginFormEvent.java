@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.demo1.view;
+package com.caveofprogramming.designpattern.mvc.view;
 
 /**
  * This class is used to create an instance that stores data from

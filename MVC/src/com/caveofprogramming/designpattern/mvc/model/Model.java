@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.demo1.model;
+package com.caveofprogramming.designpattern.mvc.model;
 
 /**
  * This class deals with the data on the back end.
