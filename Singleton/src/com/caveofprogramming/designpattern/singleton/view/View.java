@@ -22,6 +22,7 @@ public class View extends JFrame implements ActionListener {
     private final Model model;
     private final JTextField nameField;
     private final JPasswordField passField;
+    private final JPasswordField repeatPassField;
     private final JButton okButton;
 
     private LoginListener loginListener;
@@ -29,6 +30,7 @@ public class View extends JFrame implements ActionListener {
     /**
      * The {@code View} constructor receives a reference to the {@code Model}
      * and that allows the {@code Model} to listen to the {@code View}.
+     *
      * @param model a reference to the model.
      */
     public View(Model model) {
@@ -36,6 +38,7 @@ public class View extends JFrame implements ActionListener {
         this.model = model;
         nameField = new JTextField(10);
         passField = new JPasswordField(10);
+        repeatPassField = new JPasswordField(10);
         okButton = new JButton("OK");
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -84,9 +87,29 @@ public class View extends JFrame implements ActionListener {
 
         add(passField, gc);
 
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.gridx = 1;
+        gc.gridy = 3;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 10);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(new JLabel("Repeat password: "), gc);
+
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.gridx = 2;
         gc.gridy = 3;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(repeatPassField, gc);
+
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.gridx = 2;
+        gc.gridy = 4;
         gc.weightx = 1;
         gc.weighty = 100;
         gc.fill = GridBagConstraints.NONE;
@@ -98,14 +121,20 @@ public class View extends JFrame implements ActionListener {
         /* **************** Singleton pattern ************************ */
         // Database db = new Database();  "new" keyword cannot be used by external classes to create instances.
         // This is how to access an instance when using the Singleton pattern:
-        Database db = Database.getInstance();   // Global variable disadvantage
+        // Database db = Database.getInstance();   // Global variable disadvantage
 
         // Other option is to use static methods:
         addWindowListener(new WindowAdapter() {
             // At opening and closing events from the window application
             @Override
             public void windowOpened(WindowEvent e) {
-                Database.getInstance().connect();
+                try {
+                    Database.getInstance().connect();
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(View.this, "Unable to connect to the database",
+                            "Error", JOptionPane.WARNING_MESSAGE);
+                    e1.printStackTrace();
+                }
             }
 
             @Override
@@ -119,6 +148,12 @@ public class View extends JFrame implements ActionListener {
          * If you only use it a few times, it is better to rely on static methods.
          * However, if you need to use your singleton in several places throughout
          * your code, it is better to maintain an upfront reference.
+         *
+         * Another possibility is to use a connection pool, where you simply grab
+         * a connection from the pool,use it, and then release it back to the pool.
+         * The connection remains available in the pool for future use. This is an
+         * excellent way to manage connections if you are willing to handle the
+         * setup.
          */
         /* ************ End of Singleton pattern ******************* */
 
@@ -136,16 +171,16 @@ public class View extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         String password = new String(passField.getPassword());
-        String name = nameField.getText();
+        String repeatPass = new String(repeatPassField.getPassword());
 
-        fireLoginEvent(new LoginFormEvent(name, password));
-    }
-
-    // Verifies the loginListener reference is good and performs the login.
-    private void fireLoginEvent(LoginFormEvent event) {
-        if (loginListener != null) {
-            loginListener.loginPerform(event);
+        if (password.equals(repeatPass)) {
+            String name = nameField.getText();
+            fireLoginEvent(new LoginFormEvent(name, password));
+        } else {
+            JOptionPane.showMessageDialog(this, "Password does not match.",
+                    "Error", JOptionPane.WARNING_MESSAGE);
         }
+
     }
 
     /**
@@ -158,5 +193,12 @@ public class View extends JFrame implements ActionListener {
      */
     public void setLoginListener(LoginListener loginListener) {
         this.loginListener = loginListener;
+    }
+
+    // Verifies the loginListener reference is good and performs the login.
+    private void fireLoginEvent(LoginFormEvent event) {
+        if (loginListener != null) {
+            loginListener.loginPerform(event);
+        }
     }
 }
