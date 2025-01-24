@@ -1,6 +1,8 @@
 package com.caveofprogramming.designpattern.bean.controller;
 
 import com.caveofprogramming.designpattern.bean.model.Model;
+import com.caveofprogramming.designpattern.bean.view.LoginFormEvent;
+import com.caveofprogramming.designpattern.bean.view.LoginListener;
 import com.caveofprogramming.designpattern.bean.view.View;
 
 /**
@@ -13,7 +15,7 @@ import com.caveofprogramming.designpattern.bean.view.View;
  * The {@code Controller} sends commands to both the View and the Model. It is
  * almost certainly listening to the View, but may or may not listen to the Model.
  */
-public class Controller {
+public class Controller implements LoginListener {
     private final Model model;
     private final View view;
 
@@ -26,5 +28,13 @@ public class Controller {
     public Controller(View view, Model model) {
         this.view = view;
         this.model = model;
+    }
+
+    /**
+     * This is the implementation of the method defined in the LoginListener interface
+     */
+    @Override
+    public void loginPerform(LoginFormEvent event) {
+        System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
     }
 }

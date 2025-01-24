@@ -1,11 +1,14 @@
 package com.caveofprogramming.designpattern.bean.view;
 
+import com.caveofprogramming.designpattern.bean.model.Database;
 import com.caveofprogramming.designpattern.bean.model.Model;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * This class represent the view of our application. You would not necessarily call
@@ -17,49 +20,106 @@ import java.awt.event.ActionListener;
 public class View extends JFrame implements ActionListener {
 
     private final Model model;
-    private final JButton helloButton;
+    private final JTextField nameField;
+    private final JPasswordField passField;
+    private final JPasswordField repeatPassField;
+    private final JButton okButton;
+
+    private LoginListener loginListener;
 
     /**
      * The {@code View} constructor receives a reference to the {@code Model}
      * and that allows the {@code Model} to listen to the {@code View}.
+     *
      * @param model a reference to the model.
      */
     public View(Model model) {
         super("MVC Demo");  // The parent constructor (JFrame) accepts a title for the app.
         this.model = model;
-
-        // Create new Buttons here
-        helloButton = new JButton("Click me!");
-        JButton goodbyeButton = new JButton("Goodbye!");
+        nameField = new JTextField(10);
+        passField = new JPasswordField(10);
+        repeatPassField = new JPasswordField(10);
+        okButton = new JButton("OK");
 
         ////////////////////////////////////////////////////////////////////////////////////
         // This block of code leverages Swing to set up the application's windows Layout. //
         setLayout(new GridBagLayout());
 
-        // Sets the layout parameters for the button
+        // Sets the layout parameters for the window view
         GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.CENTER;
+        gc.anchor = GridBagConstraints.LAST_LINE_END;
         gc.gridx = 1;
         gc.gridy = 1;
         gc.weightx = 1;
         gc.weighty = 1;
+        gc.insets = new Insets(100, 0, 0, 10);
         gc.fill = GridBagConstraints.NONE;
 
-        add(helloButton, gc); // Adds a "hello" button to the UI.
+        add(new JLabel("Name: "), gc);
 
-        gc.anchor = GridBagConstraints.CENTER;
+        gc.anchor = GridBagConstraints.LAST_LINE_START;
+        gc.gridx = 2;
+        gc.gridy = 1;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(100, 0, 0, 0);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(nameField, gc);
+
+        gc.anchor = GridBagConstraints.LINE_END;
         gc.gridx = 1;
         gc.gridy = 2;
         gc.weightx = 1;
         gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 10);
         gc.fill = GridBagConstraints.NONE;
 
-        add(goodbyeButton, gc); // Adds a "goodbye" button to the UI.
+        add(new JLabel("Password: "), gc);
+
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.gridx = 2;
+        gc.gridy = 2;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(passField, gc);
+
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.gridx = 1;
+        gc.gridy = 3;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 10);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(new JLabel("Repeat password: "), gc);
+
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.gridx = 2;
+        gc.gridy = 3;
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.fill = GridBagConstraints.NONE;
+
+        add(repeatPassField, gc);
+
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.gridx = 2;
+        gc.gridy = 4;
+        gc.weightx = 1;
+        gc.weighty = 100;
+        gc.fill = GridBagConstraints.NONE;
+
+        add(okButton, gc);
 
         //// Implementation of the Observer Pattern: an example involving buttons ////
-        helloButton.addActionListener(this);    // Pass an instance that implements ActionListener interface.
-        goodbyeButton.addActionListener(this);
+        okButton.addActionListener(this); // The View itself listens to the okButton
         /*
+        * - Pass an instance that implements ActionListener interface.
         * - The verb "add" implies the existence of a collection, in this case, a list
         * of listeners for each button. In contrast, the verb "set" suggest that only a
         * single listener is assigned.
@@ -67,15 +127,43 @@ public class View extends JFrame implements ActionListener {
         * the provided reference implements the actionPerformed(ActionEvent e) method.
         */
 
-        /* This is another example where an anonymous class syntax is used to define
-        *  the action performed by the goodbye button. */
-        goodbyeButton.addActionListener(new ActionListener() {
+        /* **************** Singleton pattern ************************ */
+        // Database db = new Database();  "new" keyword cannot be used by external classes to create instances.
+        // This is how to access an instance when using the Singleton pattern:
+        // Database db = Database.getInstance();   // But, adds Global variable disadvantage
+        // Other option is to use static methods:
+        addWindowListener(new WindowAdapter() {
+            // At opening and closing events from the window application
             @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Sorry to see you go.");
+            public void windowOpened(WindowEvent e) {
+                try {
+                    Database.getInstance().connect();
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(View.this, "Unable to connect to the database",
+                            "Error", JOptionPane.WARNING_MESSAGE);
+                    e1.printStackTrace();
+                }
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Database.getInstance().disconnect();
             }
         });
-        ///// End of the Observer Pattern /////
+        /*
+         * Whether you retrieve your database instance each timer or maintain
+         * single upfront reference depends on how often you need to use it.
+         * If you only use it a few times, it is better to rely on static methods.
+         * However, if you need to use your singleton in several places throughout
+         * your code, it is better to maintain an upfront reference.
+         *
+         * Another possibility is to use a connection pool, where you simply grab
+         * a connection from the pool,use it, and then release it back to the pool.
+         * The connection remains available in the pool for future use. This is an
+         * excellent way to manage connections if you are willing to handle the
+         * setup.
+         */
+        /* ************ End of Singleton pattern ******************* */
 
         setSize(600, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -84,20 +172,43 @@ public class View extends JFrame implements ActionListener {
     }
 
     /**
-     * This method is defined in the ActionListener Interface and implemented here.
-     * This method is called by the {@code JButton} when the user clicks the {@code helloButton}
-     * or the {@code goodbyeButton}.
+     * This method is defined in the ActionListener Interface and implemented here.</br>
+     * This method is invoked by {@code JButton} when the user clicks the {@code okButton}.
      *
-     * @param e the event to be processed. This Object is used solely to contain event-related data.
+     * @param e the event to be processed. A click, in this case.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        // When called by the JButton, this method receives the event as "ActionEvent e".
-        // The reference "e" can then be used to access data associated with the button that triggered the event.
-        JButton source = (JButton) e.getSource();
-        if (source == helloButton)
-            System.out.println("Hello there!");
-        else
-            System.out.println("Some other button.");
+
+        String password = new String(passField.getPassword());
+        String repeatPass = new String(repeatPassField.getPassword());
+
+        if (password.equals(repeatPass)) {
+            String name = nameField.getText();
+            fireLoginEvent(new LoginFormEvent(name, password));
+        } else {
+            JOptionPane.showMessageDialog(this, "Password does not match.",
+                    "Error", JOptionPane.WARNING_MESSAGE);
+        }
+
+    }
+
+    /**
+     * This setter method accepts any class that implements the {@code LoginListener} interface
+     * and sets the {@code loginListener} field to point to the given instance of that class.
+     * The View is unaware of the specific type of the instance passed to this method; it only
+     * requires that the type implements the {@code loginPerform()} method.
+     *
+     * @param loginListener A data type that implements the loginPerform() method.
+     */
+    public void setLoginListener(LoginListener loginListener) {
+        this.loginListener = loginListener;
+    }
+
+    // Verifies the loginListener reference is good and performs the login.
+    private void fireLoginEvent(LoginFormEvent event) {
+        if (loginListener != null) {
+            loginListener.loginPerform(event);
+        }
     }
 }
