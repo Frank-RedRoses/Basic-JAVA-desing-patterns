@@ -31,6 +31,13 @@ public class Person {
 
     public Person() {}
 
+    // This constructor is just for convenience of the DAO example
+    public Person(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
+    // getters and setters
     public int getId() {
         return id;
     }

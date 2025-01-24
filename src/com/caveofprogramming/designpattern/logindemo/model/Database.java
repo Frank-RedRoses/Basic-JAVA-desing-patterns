@@ -65,6 +65,14 @@ public class Database {
      */
 
     /**
+     *  Gets the database connection.
+     * @return an object containing a connection to the database.
+     */
+    public Connection getConn() {
+        return conn;
+    }
+
+    /**
      * Connects to the database.
      */
     public void connect() throws Exception {

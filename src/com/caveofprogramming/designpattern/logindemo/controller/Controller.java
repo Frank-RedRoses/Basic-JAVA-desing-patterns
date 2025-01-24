@@ -1,9 +1,13 @@
 package com.caveofprogramming.designpattern.logindemo.controller;
 
 import com.caveofprogramming.designpattern.logindemo.model.Model;
+import com.caveofprogramming.designpattern.logindemo.model.Person;
+import com.caveofprogramming.designpattern.logindemo.model.PersonDAO;
 import com.caveofprogramming.designpattern.logindemo.view.LoginFormEvent;
 import com.caveofprogramming.designpattern.logindemo.view.LoginListener;
 import com.caveofprogramming.designpattern.logindemo.view.View;
+
+import java.sql.SQLException;
 
 /**
  * This class handles the business logic of the application.
@@ -18,6 +22,10 @@ import com.caveofprogramming.designpattern.logindemo.view.View;
 public class Controller implements LoginListener {
     private final Model model;
     private final View view;
+
+    // For the convenience of this example, a PersonDAO is instantiated here.
+    // In the future, a DAOFactory will handle with DAOs.
+    private PersonDAO personDAO = new PersonDAO();
 
     /**
      * The {@code Controller} constructor receives references to the {@code view} and
@@ -36,5 +44,14 @@ public class Controller implements LoginListener {
     @Override
     public void loginPerform(LoginFormEvent event) {
         System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
+
+        // The validation and verification of the name and the password should be performed in the `View`.
+        try {
+            personDAO.addPerson(new Person(event.getName(), event.getPassword()));
+        } catch (SQLException e) {
+            // Here, I could add code to send the error to the View
+            // and implement a method in the View to displays the error.
+            throw new RuntimeException(e);
+        }
     }
 }

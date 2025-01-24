@@ -3,7 +3,7 @@ package com.caveofprogramming.designpattern.logindemo.view;
 /**
  * This class is used to create an instance that stores data from
  * the login form and transmit it when a login event is triggered.
- * This type of class is also referred to as a Bean.
+ * This class is another example of a Bean.
  */
 public class LoginFormEvent {
     private String name;
