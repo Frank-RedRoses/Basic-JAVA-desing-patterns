@@ -3,8 +3,8 @@ package com.caveofprogramming.designpattern.logindemo.controller;
 import com.caveofprogramming.designpattern.logindemo.model.Model;
 import com.caveofprogramming.designpattern.logindemo.model.Person;
 import com.caveofprogramming.designpattern.logindemo.model.PersonDAO;
-import com.caveofprogramming.designpattern.logindemo.view.LoginFormEvent;
-import com.caveofprogramming.designpattern.logindemo.view.LoginListener;
+import com.caveofprogramming.designpattern.logindemo.view.CreateUserEvent;
+import com.caveofprogramming.designpattern.logindemo.view.CreateUserListener;
 import com.caveofprogramming.designpattern.logindemo.view.View;
 
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
  * The {@code Controller} sends commands to both the View and the Model. It is
  * almost certainly listening to the View, but may or may not listen to the Model.
  */
-public class Controller implements LoginListener {
+public class Controller implements CreateUserListener {
     private final Model model;
     private final View view;
 
@@ -42,7 +42,7 @@ public class Controller implements LoginListener {
      * This is the implementation of the method defined in the LoginListener interface
      */
     @Override
-    public void loginPerform(LoginFormEvent event) {
+    public void userCreated(CreateUserEvent event) {
         System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
 
         // The validation and verification of the name and the password should be performed in the `View`.

@@ -37,6 +37,14 @@ public class Person {
         this.password = password;
     }
 
+    // This constructor is just for example purposes of retrieving a list of people
+    public Person(int id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+    }
+
+
     // getters and setters
     public int getId() {
         return id;

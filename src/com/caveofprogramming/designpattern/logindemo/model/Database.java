@@ -65,7 +65,7 @@ public class Database {
      */
 
     /**
-     *  Gets the database connection.
+     * Returns the database connection.
      * @return an object containing a connection to the database.
      */
     public Connection getConn() {

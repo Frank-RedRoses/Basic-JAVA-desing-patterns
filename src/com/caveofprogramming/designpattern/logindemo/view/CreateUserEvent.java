@@ -5,11 +5,11 @@ package com.caveofprogramming.designpattern.logindemo.view;
  * the login form and transmit it when a login event is triggered.
  * This class is another example of a Bean.
  */
-public class LoginFormEvent {
+public class CreateUserEvent {
     private String name;
     private String password;
 
-    public LoginFormEvent(String name, String password) {
+    public CreateUserEvent(String name, String password) {
         this.name = name;
         this.password = password;
     }

@@ -25,7 +25,7 @@ public class View extends JFrame implements ActionListener {
     private final JPasswordField repeatPassField;
     private final JButton okButton;
 
-    private LoginListener loginListener;
+    private CreateUserListener loginListener;
 
     /**
      * The {@code View} constructor receives a reference to the {@code Model}
@@ -39,7 +39,7 @@ public class View extends JFrame implements ActionListener {
         nameField = new JTextField(10);
         passField = new JPasswordField(10);
         repeatPassField = new JPasswordField(10);
-        okButton = new JButton("OK");
+        okButton = new JButton("Create user");
 
         ////////////////////////////////////////////////////////////////////////////////////
         // This block of code leverages Swing to set up the application's windows Layout. //
@@ -172,8 +172,8 @@ public class View extends JFrame implements ActionListener {
     }
 
     /**
-     * This method is defined in the ActionListener Interface and implemented here.</br>
-     * This method is invoked by {@code JButton} when the user clicks the {@code okButton}.
+     * This method is defined in the ActionListener Interface and implemented here.
+     * It is invoked by {@code JButton} when the user clicks the {@code okButton}.
      *
      * @param e the event to be processed. A click, in this case.
      */
@@ -185,7 +185,7 @@ public class View extends JFrame implements ActionListener {
 
         if (password.equals(repeatPass)) {
             String name = nameField.getText();
-            fireLoginEvent(new LoginFormEvent(name, password));
+            fireLoginEvent(new CreateUserEvent(name, password));
         } else {
             JOptionPane.showMessageDialog(this, "Password does not match.",
                     "Error", JOptionPane.WARNING_MESSAGE);
@@ -199,16 +199,16 @@ public class View extends JFrame implements ActionListener {
      * The View is unaware of the specific type of the instance passed to this method; it only
      * requires that the type implements the {@code loginPerform()} method.
      *
-     * @param loginListener A data type that implements the loginPerform() method.
+     * @param createUserListener A data type that implements the loginPerform() method.
      */
-    public void setLoginListener(LoginListener loginListener) {
-        this.loginListener = loginListener;
+    public void setLoginListener(CreateUserListener createUserListener) {
+        this.loginListener = createUserListener;
     }
 
     // Verifies the loginListener reference is good and performs the login.
-    private void fireLoginEvent(LoginFormEvent event) {
+    private void fireLoginEvent(CreateUserEvent event) {
         if (loginListener != null) {
-            loginListener.loginPerform(event);
+            loginListener.userCreated(event);
         }
     }
 }

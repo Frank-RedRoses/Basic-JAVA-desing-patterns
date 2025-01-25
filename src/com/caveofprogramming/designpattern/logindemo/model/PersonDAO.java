@@ -1,8 +1,7 @@
 package com.caveofprogramming.designpattern.logindemo.model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,14 +52,35 @@ public class PersonDAO {
     }
 
     /**
-     * Retrieves a list of all people from the database.
+     * Retrieves a list of all people from the database, order by id.
      * This approach is only suitable for very small databases. Typically, you will use
      * a {@code find()} method to search for specific objects in the database.
      *
-     * @return
+     * @return returns a list with all the people in the database order by id.
      */
-    public List<Person> getPeople() {
-        return null;
+    public List<Person> getPeople() throws SQLException {
+        List<Person> people = new ArrayList<Person>();
+
+        Connection conn = Database.getInstance().getConn();
+
+        String sql = "select id, name, password from people order by id";
+        Statement selectStatement = conn.createStatement();
+
+        ResultSet results = selectStatement.executeQuery(sql);
+
+        while (results.next()) {
+            int id = results.getInt("id");
+            String name = results.getString("name");
+            String password = results.getString("password");
+
+            Person person = new Person(id, name, password);
+            people.add(person);
+        }
+
+        results.close();
+        selectStatement.close();
+
+        return people;
     }
 
     /**
