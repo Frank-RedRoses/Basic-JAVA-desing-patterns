@@ -1,12 +1,11 @@
-package com.caveofprogramming.designpattern.logindemo.controller;
+package com.caveofprogramming.designpattern.dao.controller;
 
-import com.caveofprogramming.designpattern.logindemo.model.DAOFactory;
-import com.caveofprogramming.designpattern.logindemo.model.Model;
-import com.caveofprogramming.designpattern.logindemo.model.Person;
-import com.caveofprogramming.designpattern.logindemo.model.PersonDAO;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserEvent;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserListener;
-import com.caveofprogramming.designpattern.logindemo.view.View;
+import com.caveofprogramming.designpattern.dao.model.Model;
+import com.caveofprogramming.designpattern.dao.model.Person;
+import com.caveofprogramming.designpattern.dao.model.PersonDAO;
+import com.caveofprogramming.designpattern.dao.view.CreateUserEvent;
+import com.caveofprogramming.designpattern.dao.view.CreateUserListener;
+import com.caveofprogramming.designpattern.dao.view.View;
 
 import java.sql.SQLException;
 
@@ -26,7 +25,7 @@ public class Controller implements CreateUserListener {
 
     // For the convenience of this example, a PersonDAO is instantiated here.
     // In the future, a DAOFactory will handle with DAOs.
-    private PersonDAO personDAO = DAOFactory.getPersonDAO();
+    private PersonDAO personDAO = new PersonDAO();
 
     /**
      * The {@code Controller} constructor receives references to the {@code view} and
