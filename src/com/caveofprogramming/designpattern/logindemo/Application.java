@@ -50,6 +50,5 @@ public class Application {
         view.setLoginListener(controller);
         /* The controller is abstracted behind an interface, ensuring that the View and the Controller
          * are not tightly coupled. */
-
     }
 }

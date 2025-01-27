@@ -1,9 +1,6 @@
 package com.caveofprogramming.designpattern.logindemo.controller;
 
-import com.caveofprogramming.designpattern.logindemo.model.DAOFactory;
-import com.caveofprogramming.designpattern.logindemo.model.Model;
-import com.caveofprogramming.designpattern.logindemo.model.Person;
-import com.caveofprogramming.designpattern.logindemo.model.PersonDAO;
+import com.caveofprogramming.designpattern.logindemo.model.*;
 import com.caveofprogramming.designpattern.logindemo.view.CreateUserEvent;
 import com.caveofprogramming.designpattern.logindemo.view.CreateUserListener;
 import com.caveofprogramming.designpattern.logindemo.view.View;
@@ -24,9 +21,6 @@ public class Controller implements CreateUserListener {
     private final Model model;
     private final View view;
 
-    // For the convenience of this example, a PersonDAO is instantiated here.
-    // In the future, a DAOFactory will handle with DAOs.
-    private PersonDAO personDAO = DAOFactory.getPersonDAO();
 
     /**
      * The {@code Controller} constructor receives references to the {@code view} and
@@ -44,6 +38,12 @@ public class Controller implements CreateUserListener {
      */
     @Override
     public void userCreated(CreateUserEvent event) {
+
+        // Here the specific database DAO factory is obtained
+        DAOFactory factory = DAOFactory.getFactory(DAOFactory.MYSQL);
+
+        PersonDAO personDAO = factory.getPersonDAO();
+
         System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
 
         // The validation and verification of the name and the password should be performed in the `View`.

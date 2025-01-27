@@ -2,16 +2,18 @@ package com.caveofprogramming.designpattern.logindemo.model;
 
 import java.util.List;
 
-public class LogDAO {
-    public void addEntry(String message) {
-        // Not implemented
-        // Get current time and log message to database
-    }
+/**
+ * <p>The {@code LogDAO} interface provides CRUD (create, retrieve) methods to perform
+ * database operations.</p>
+ * <p>This interface allows to implement different versions of DAO methods according
+ * to the specific database, abstracting the representation of the {@code LogDAO}.</p>
+ * This ensures that the {@code Controller} is decoupled from the implementations details
+ * and only interacts with the appropriate {@code LogDAO} based on the required database.
+ */
+public interface LogDAO {
+    void addEntry(String message);
 
-    public List<Log> getEntries(int number) {
-        // Not implemented. Get lastest "number" log messages.
-        return null;
-    }
+    List<Log> getEntries(int number);
 
     // May not need update() or delete() in this example.
 }

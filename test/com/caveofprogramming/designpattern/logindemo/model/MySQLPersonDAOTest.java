@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *     <li>Facilitates refactoring</li>
  * </ul>
  */
-class PersonDAOTest {
+class MySQLPersonDAOTest {
 
     @BeforeAll
     public static void setUpBeforeClass() throws Exception {
@@ -40,7 +40,7 @@ class PersonDAOTest {
 //         JDBC should be used here rather than a custom method I wrote,
 //         as it provides a more reliable and standardized way to handle
 //         database operations, reducing the risk of potential failures.
-        PersonDAO dao = DAOFactory.getPersonDAO();  // Method wrote by myself
+        PersonDAO dao = DAOFactory.getFactory(DAOFactory.MYSQL).getPersonDAO();  // Method wrote by myself
         dao.deleteAll();                            // Method wrote by myself
     }
 
@@ -55,7 +55,7 @@ class PersonDAOTest {
         System.out.println("testing");
         Person person1 = new Person("Bob", "letmein");
         Person person2 = new Person("Sue", "PassHello");
-        PersonDAO dao = DAOFactory.getPersonDAO();
+        PersonDAO dao = DAOFactory.getFactory(DAOFactory.MYSQL).getPersonDAO();
         /* Using a try-catch block to handle exceptions within the test and
          * explicitly failing the test when an exception is caught could be
          * a better approach. This is, of course, a personal preference and
