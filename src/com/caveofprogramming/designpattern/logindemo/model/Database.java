@@ -68,7 +68,7 @@ public class Database {
      * Returns the database connection.
      * @return an object containing a connection to the database.
      */
-    public Connection getConn() {
+    public Connection getConnection() {
         return conn;
     }
 
