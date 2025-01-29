@@ -42,16 +42,17 @@ public class Controller implements CreateUserListener {
         // Here the specific database DAO factory is obtained
         DAOFactory factory = DAOFactory.getFactory(DAOFactory.MYSQL);
 
-        PersonDAO personDAO = factory.getPersonDAO();
+        PersonDAO personDAO = factory.getPersonDAO(); // personDAO with MySQL implementation.
 
         System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
 
-        // The validation and verification of the name and the password should be performed in the `View`.
+        // The validation and verification of the name and password
+        // should be performed in the `View`.
         try {
             personDAO.addPerson(new Person(event.getName(), event.getPassword()));
         } catch (SQLException e) {
             // Here, I could add code to send the error to the View
-            // and implement a method in the View to displays the error.
+            // and implement a method in the View that displays the error.
             throw new RuntimeException(e);
         }
     }

@@ -23,6 +23,16 @@ public abstract class DAOFactory {
 
     public abstract LogDAO getLogDAO();
 
+    /**
+     * This method returns one of two possible {@code DAOFactory} implementation
+     * based on the specific database {@code type}. The returned DAOFactory is
+     * abstracted behind this class, ensuring that the calling class does not need
+     * to know the implementation details the selected DAOFactory.
+     *
+     * @param type {@code DAOFactory.MYSQL} or {@code DAOFactory.ORACLE}
+     * @return Either a specific {@code DAOFactory} implementation based on the given
+     * database {@code type} or {@code null} if the {@code type} is unsupported.
+     */
     public static DAOFactory getFactory(int type) {
         switch(type) {
             case MYSQL:

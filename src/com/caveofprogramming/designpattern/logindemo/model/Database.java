@@ -60,9 +60,7 @@ public class Database {
      * the class to be constructed at program startup. However, it is not thread-safe.
      ***************************************************************************** */
 
-    /*
-     * Add whatever methods you like to your singleton class.
-     */
+     ///// You can add any methods you need to your singleton class. /////
 
     /**
      * Returns the database connection.
