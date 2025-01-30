@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.logindemo.model;
+package com.caveofprogramming.designpattern.multiple_databases.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.logindemo.model;
+package com.caveofprogramming.designpattern.dao_factory.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -60,7 +60,9 @@ public class Database {
      * the class to be constructed at program startup. However, it is not thread-safe.
      ***************************************************************************** */
 
-     ///// You can add any methods you need to your singleton class. /////
+    /*
+     * Add whatever methods you like to your singleton class.
+     */
 
     /**
      * Returns the database connection.

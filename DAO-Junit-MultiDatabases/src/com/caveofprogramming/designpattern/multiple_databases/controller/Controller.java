@@ -1,9 +1,9 @@
-package com.caveofprogramming.designpattern.logindemo.controller;
+package com.caveofprogramming.designpattern.multiple_databases.controller;
 
-import com.caveofprogramming.designpattern.logindemo.model.*;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserEvent;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserListener;
-import com.caveofprogramming.designpattern.logindemo.view.View;
+import com.caveofprogramming.designpattern.multiple_databases.model.*;
+import com.caveofprogramming.designpattern.multiple_databases.view.CreateUserEvent;
+import com.caveofprogramming.designpattern.multiple_databases.view.CreateUserListener;
+import com.caveofprogramming.designpattern.multiple_databases.view.View;
 
 import java.sql.SQLException;
 

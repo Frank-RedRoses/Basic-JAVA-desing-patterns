@@ -1,6 +1,4 @@
-package com.caveofprogramming.designpattern.logindemo.model;
-
-import java.util.Objects;
+package com.caveofprogramming.designpattern.dao.model;
 
 /**
  * <p>This Class represent a Transfer Object, also known as a Bean, and it is the first step
@@ -70,18 +68,5 @@ public class Person {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(name, person.name) && Objects.equals(password, person.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, password);
     }
 }

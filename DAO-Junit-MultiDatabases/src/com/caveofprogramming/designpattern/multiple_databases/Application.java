@@ -1,8 +1,8 @@
-package com.caveofprogramming.designpattern.logindemo;
+package com.caveofprogramming.designpattern.multiple_databases;
 
-import com.caveofprogramming.designpattern.logindemo.controller.Controller;
-import com.caveofprogramming.designpattern.logindemo.model.Model;
-import com.caveofprogramming.designpattern.logindemo.view.View;
+import com.caveofprogramming.designpattern.multiple_databases.controller.Controller;
+import com.caveofprogramming.designpattern.multiple_databases.model.Model;
+import com.caveofprogramming.designpattern.multiple_databases.view.View;
 
 import javax.swing.*;
 

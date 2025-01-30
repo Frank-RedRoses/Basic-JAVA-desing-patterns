@@ -1,15 +1,15 @@
-package com.caveofprogramming.designpattern.logindemo.view;
+package com.caveofprogramming.designpattern.dao_factory.view;
 
 /**
  * This class is used to create an instance that stores data from
  * the login form and transmit it when a login event is triggered.
- * This type of class is also referred to as a Bean.
+ * This class is another example of a Bean.
  */
-public class LoginFormEvent {
+public class CreateUserEvent {
     private String name;
     private String password;
 
-    public LoginFormEvent(String name, String password) {
+    public CreateUserEvent(String name, String password) {
         this.name = name;
         this.password = password;
     }

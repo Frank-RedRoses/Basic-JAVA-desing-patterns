@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.logindemo.model;
+package com.caveofprogramming.designpattern.dao_factory.model;
 
 /**
  * The Model class deals with the data on the back end.<br>

@@ -1,8 +1,8 @@
-package com.caveofprogramming.designpattern.logindemo;
+package com.caveofprogramming.designpattern.dao;
 
-import com.caveofprogramming.designpattern.logindemo.controller.Controller;
-import com.caveofprogramming.designpattern.logindemo.model.Model;
-import com.caveofprogramming.designpattern.logindemo.view.View;
+import com.caveofprogramming.designpattern.dao.controller.Controller;
+import com.caveofprogramming.designpattern.dao.model.Model;
+import com.caveofprogramming.designpattern.dao.view.View;
 
 import javax.swing.*;
 
@@ -50,5 +50,6 @@ public class Application {
         view.setLoginListener(controller);
         /* The controller is abstracted behind an interface, ensuring that the View and the Controller
          * are not tightly coupled. */
+
     }
 }

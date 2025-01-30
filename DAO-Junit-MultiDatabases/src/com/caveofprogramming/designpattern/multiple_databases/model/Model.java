@@ -1,4 +1,4 @@
-package com.caveofprogramming.designpattern.logindemo.model;
+package com.caveofprogramming.designpattern.multiple_databases.model;
 
 /**
  * The Model class deals with the data on the back end.<br>

@@ -1,7 +1,7 @@
-package com.caveofprogramming.designpattern.logindemo.view;
+package com.caveofprogramming.designpattern.dao.view;
 
-import com.caveofprogramming.designpattern.logindemo.model.Database;
-import com.caveofprogramming.designpattern.logindemo.model.Model;
+import com.caveofprogramming.designpattern.dao.model.Database;
+import com.caveofprogramming.designpattern.dao.model.Model;
 
 import javax.swing.*;
 import java.awt.*;
