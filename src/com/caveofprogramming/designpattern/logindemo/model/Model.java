@@ -1,5 +1,13 @@
 package com.caveofprogramming.designpattern.logindemo.model;
 
+import com.caveofprogramming.designpattern.logindemo.view.PeopleChangedListener;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * The Model class deals with the data on the back end.<br>
  * As with the {@code  View} class case, the names of the class and the root
@@ -25,6 +33,45 @@ package com.caveofprogramming.designpattern.logindemo.model;
  * the Model package.
  * </p>
  */
-
 public class Model {
+
+    private final Set<Person> people = new HashSet<Person>();
+    private PeopleChangedListener peopleChangedListener;
+
+    // getter
+    public List<Person> getPeople() {
+        return new ArrayList<Person>(people);
+    }
+
+    // setter
+    public void setPeopleChangedListener(PeopleChangedListener peopleChangedListener) {
+        this.peopleChangedListener = peopleChangedListener;
+    }
+
+
+    /**
+     * Get the all the {@code Person} entries from the database and
+     * save them in the memory of the application as a list.
+     *
+     * @throws SQLException if a database access error occurs or this
+     * method is called on a closed connection
+     */
+    public void load() throws SQLException {
+        DAOFactory DAOfactory = DAOFactory.getFactory(DAOFactory.MYSQL);
+        PersonDAO personDAO = DAOfactory.getPersonDAO();
+
+//        people.clear();
+        people.addAll(personDAO.getPeople());
+
+        fireDataChanged();
+    }
+
+    // Updates the contends of the list of Person
+    private void fireDataChanged() {
+        if (peopleChangedListener != null) {
+            peopleChangedListener.onPeopleChanged();
+        }
+    }
+
+
 }

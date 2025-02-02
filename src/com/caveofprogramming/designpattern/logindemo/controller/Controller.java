@@ -1,9 +1,7 @@
 package com.caveofprogramming.designpattern.logindemo.controller;
 
 import com.caveofprogramming.designpattern.logindemo.model.*;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserEvent;
-import com.caveofprogramming.designpattern.logindemo.view.CreateUserListener;
-import com.caveofprogramming.designpattern.logindemo.view.View;
+import com.caveofprogramming.designpattern.logindemo.view.*;
 
 import java.sql.SQLException;
 
@@ -17,7 +15,7 @@ import java.sql.SQLException;
  * The {@code Controller} sends commands to both the View and the Model. It is
  * almost certainly listening to the View, but may or may not listen to the Model.
  */
-public class Controller implements CreateUserListener {
+public class Controller implements CreateUserListener, SaveListener, AppListener {
     private final Model model;
     private final View view;
 
@@ -37,7 +35,7 @@ public class Controller implements CreateUserListener {
      * This is the implementation of the method defined in the LoginListener interface
      */
     @Override
-    public void userCreated(CreateUserEvent event) {
+    public void onUserCreated(CreateUserEvent event) {
 
         // Here the specific database DAO factory is obtained
         DAOFactory factory = DAOFactory.getFactory(DAOFactory.MYSQL);
@@ -56,4 +54,59 @@ public class Controller implements CreateUserListener {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void onSave() {
+        // To Do: implement logic that pass the data of new people from a
+        // list of people that holds the Person data of the database.
+    }
+
+    /* **************** Singleton pattern *********************** */
+    /* Database db = new Database();  "new" keyword cannot be used by
+    * external classes to create instances.
+    * This is how to access an instance when using the Singleton pattern:
+    * Database db = Database.getInstance();   // But, adds Global variable disadvantage
+    * Other option is to call static methods using the database instance:
+    */
+    /**
+     * Connects to the database.
+     * Implements singleton pattern static methods.
+     */
+    @Override
+    public void onOpen() {
+        try {
+            Database.getInstance().connect();
+        } catch (Exception e) {
+            view.showError("Unable to connect to the database");
+        }
+
+        try {
+            model.load();
+        } catch (Exception e) {
+            view.showError("Error loading data from database");
+        }
+    }
+
+    /**
+     * Disconnects from the database.
+     * Implements singleton pattern static methods.
+     */
+    @Override
+    public void onClose() {
+        Database.getInstance().disconnect();
+    }
+    /* Notes on the Singleton:
+     * Whether you retrieve your database instance each timer or maintain
+     * single upfront reference depends on how often you need to use it.
+     * If you only use it a few times, it is better to rely on static methods.
+     * However, if you need to use your singleton in several places throughout
+     * your code, it is better to maintain an upfront reference.
+     *
+     * Another possibility is to use a connection pool, where you simply grab
+     * a connection from the pool,use it, and then release it back to the pool.
+     * The connection remains available in the pool for future use. This is an
+     * excellent way to manage connections if you are willing to handle the
+     * setup.
+     */
+    /* ************ End of Singleton pattern ******************* */
 }
