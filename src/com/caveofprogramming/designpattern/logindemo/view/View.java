@@ -16,13 +16,14 @@ import java.util.List;
  * The important concept is that this is the part of the code responsible for interacting
  * with the user.
  */
-public class View extends JFrame implements ActionListener, PeopleChangedListener {
+public class View extends JFrame implements ActionListener, PeopleUpdatedListener {
 
+    private static final long serialVersionUID = 1L;
     private final Model model;
     private final JTextField nameField;
     private final JPasswordField passField;
     private final JPasswordField repeatPassField;
-    private final JButton okButton;
+    private final JButton createUserButton;
     private final JList<Person> userList;
     private final DefaultListModel<Person> listModel;
 
@@ -39,12 +40,14 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
     public View(Model model) {
         super("MVC Demo");  // The parent constructor (JFrame) accepts a title for the app.
         this.model = model;
+
         nameField = new JTextField(10);
         passField = new JPasswordField(10);
         repeatPassField = new JPasswordField(10);
-        okButton = new JButton("Create user");
+        createUserButton = new JButton("Create user");
         listModel = new DefaultListModel<Person>();
         userList = new JList<Person>(listModel);
+
         int margin = 15;
         Border outerBorder = BorderFactory.createEmptyBorder(margin, margin, margin, margin);
         Border innerBorder = BorderFactory.createEtchedBorder();
@@ -123,7 +126,7 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
         gc.weighty = 100;
         gc.fill = GridBagConstraints.NONE;
 
-        add(okButton, gc);
+        add(createUserButton, gc);
 
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.gridx = 1;
@@ -137,31 +140,32 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
         add(new JScrollPane(userList), gc);
 
         //// Implementation of the Observer Pattern: an example involving buttons ////
-        okButton.addActionListener(this); // Assign the View itself to listen to the okButton
+        createUserButton.addActionListener(this); // Assign the View itself to listen to the okButton
         /* Notes:
-        * - Pass an instance that implements ActionListener interface.
-        * - The verb "add" implies the existence of a collection, in this case, a list
-        * of listeners for each button. In contrast, the verb "set" suggest that only a
-        * single listener is assigned.
-        * - These methods are unaware that "this" refers to the view. They only know that
-        * the provided reference implements the actionPerformed(ActionEvent e) method.
-        */
+         * - Pass an instance that implements ActionListener interface.
+         * - The verb "add" implies the existence of a collection, in this case, a list
+         * of listeners for each button. In contrast, the verb "set" suggest that only a
+         * single listener is assigned.
+         * - addActionListener() methods are unaware that "this" refers to the view.
+         * They only know that the provided reference implements the
+         * actionPerformed(ActionEvent e) method.
+         */
 
         // This part of the code start the first interaction with the database
         addWindowListener(new WindowAdapter() {
             // At opening and closing events from the window application do:
             @Override
             public void windowOpened(WindowEvent e) {
-                appListener.onOpen();
+                fireOpenEvent();
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                appListener.onClose();
+                fireCloseEvent();
             }
         });
 
-        // Adds the Menu Bar with the "Save" item to the Windows
+        // Adds the Menu Bar with the "Save" item to the GUI Windows
         JMenuBar menu = createMenu();
         setJMenuBar(menu);
 
@@ -176,7 +180,7 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
      * This method is defined in the ActionListener Interface and implemented here.
      * It is invoked by {@code JButton} when the user clicks the {@code okButton}.
      *
-     * @param e the event to be processed. A click, in this case.
+     * @param e the event to be processed. A button click, in this case.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -187,14 +191,18 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
         if (password.equals(repeatPass)) {
             String name = nameField.getText();
             fireCreateUserEvent(new CreateUserEvent(name, password));
+
+            nameField.setText("");
+            passField.setText("");
+            repeatPassField.setText("");
         } else {
             showError("Password does not match");
         }
-
     }
 
     /**
      * Shows given error on the View window as a warning message.
+     *
      * @param error a string error message.
      */
     public void showError(String error) {
@@ -206,7 +214,7 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
     }
 
     /**
-     *  Creates a menu bar on the view that shows a "File" menu with a "Save" item.
+     * Creates a menu bar on the view that shows a "File" menu with a "Save" item.
      *
      * @return a JMenuBar instance containing a "Save" item.
      */
@@ -250,12 +258,13 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
 
     /**
      * Sets the {@code saveListener} to the given instance of a class that
-     * implements tha {@code SaveListener} interface.
+     * implements the {@code SaveListener} interface.
      * <p>
      * This allows the view to notify the listener, in this example the {@code controller},
      * when a save to database event occurs, without needing to know the specific details
      * of the implementation
      * </p>
+     *
      * @param saveListener an instance of a class implementing {@code SaveListener}
      *                     which handle the writing of new user to the database.
      */
@@ -263,6 +272,18 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
         this.saveListener = saveListener;
     }
 
+    /**
+     * Sets the {@code appListener} to the given instance of a class that
+     * implements the {@code AppListener} interface
+     * <p>
+     * This allows the view to notify the listener, in this example the {@code controller},
+     * when a event like opening or closing the window GUI happens.
+     * </p>
+     *
+     * @param appListener an instance of a class implementation {@code AppListener}
+     *                    interface which handle what to do when the GUI window is
+     *                    open or close.
+     */
     public void setAppListener(AppListener appListener) {
         this.appListener = appListener;
     }
@@ -282,8 +303,20 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
         }
     }
 
+    // runs onOpen() implementation on call
+    private void fireOpenEvent() {
+        if (appListener != null)
+            appListener.onOpen();
+    }
+
+    // runs onClose() implementation on call
+    private void fireCloseEvent() {
+        if (appListener != null)
+            appListener.onClose();
+    }
+
     @Override
-    public void onPeopleChanged() {
+    public void onPeopleListUpdated() {
         /*
          * Some interpretation of the MVC would force the view
          * to be updated only through the controller, which would
@@ -292,10 +325,10 @@ public class View extends JFrame implements ActionListener, PeopleChangedListene
          * Others, as here, have the view listening to the model
          * (but never telling it what to do)
          */
-//        listModel.clear();
+        listModel.clear();  // clear the list model of the GUI
 
+        // updates the list model in the GUI
         List<Person> people = model.getPeople();
-
         for (Person person : people)
             listModel.addElement(person);
     }

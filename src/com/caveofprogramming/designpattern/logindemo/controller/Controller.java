@@ -19,11 +19,11 @@ public class Controller implements CreateUserListener, SaveListener, AppListener
     private final Model model;
     private final View view;
 
-
     /**
      * The {@code Controller} constructor receives references to the {@code view} and
      * the {@code model}. This allows the {@code Controller} to interact with both components.
-     * @param view a reference to the {@code view}
+     *
+     * @param view  a reference to the {@code view}
      * @param model a reference to the {@code model}
      */
     public Controller(View view, Model model) {
@@ -32,42 +32,44 @@ public class Controller implements CreateUserListener, SaveListener, AppListener
     }
 
     /**
-     * This is the implementation of the method defined in the LoginListener interface
+     * This is the implementation of the method defined in
+     * the CreateUserListener interface.
+     * <p>
+     * {@code onUserCreated()} is called when an user creation event
+     *  is triggered by the {@code createUserButton}; and temporarily
+     *  adds a new {@code Person} to list in the GUI.
+     * </p>
+     *
+     * @param event user create event triggered on pressing a {@code JButton}
      */
     @Override
     public void onUserCreated(CreateUserEvent event) {
-
-        // Here the specific database DAO factory is obtained
-        DAOFactory factory = DAOFactory.getFactory(DAOFactory.MYSQL);
-
-        PersonDAO personDAO = factory.getPersonDAO(); // personDAO with MySQL implementation.
-
-        System.out.println("Login event received: " + event.getName() + "; " + event.getPassword());
-
         // The validation and verification of the name and password
         // should be performed in the `View`.
-        try {
-            personDAO.addPerson(new Person(event.getName(), event.getPassword()));
-        } catch (SQLException e) {
-            // Here, I could add code to send the error to the View
-            // and implement a method in the View that displays the error.
-            throw new RuntimeException(e);
-        }
+        model.addPerson(new Person(event.getName(), event.getPassword()));
     }
 
+    /**
+     * Persists new or updated {@code Person} instances from the GUI's
+     * list of people to the {@code Database}.
+     */
     @Override
     public void onSave() {
-        // To Do: implement logic that pass the data of new people from a
-        // list of people that holds the Person data of the database.
+        try {
+            model.save();
+        } catch (Exception e) {
+            view.showError("Error saving to the database");
+        }
     }
 
     /* **************** Singleton pattern *********************** */
     /* Database db = new Database();  "new" keyword cannot be used by
-    * external classes to create instances.
-    * This is how to access an instance when using the Singleton pattern:
-    * Database db = Database.getInstance();   // But, adds Global variable disadvantage
-    * Other option is to call static methods using the database instance:
-    */
+     * external classes to create instances.
+     * This is how to access an instance when using the Singleton pattern:
+     * Database db = Database.getInstance();   // But, adds Global variable disadvantage
+     * Other option is to call static methods using the database instance:
+     */
+
     /**
      * Connects to the database.
      * Implements singleton pattern static methods.

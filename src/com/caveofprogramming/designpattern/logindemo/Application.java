@@ -27,6 +27,11 @@ public class Application {
 
     public static void main(String[] args) {
         // This block of code from here is specific to Swing and not MVC pattern related.
+        /*
+         * This is the recommended way to create a Swing
+         * event dispatch thread -- i.e. to run a Swing
+         * program.
+         */
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -95,8 +100,6 @@ public class Application {
          * and instruct the view to update by calling methods within
          * the view package.
          */
-        model.setPeopleChangedListener(view);
-
-
+        model.setPeopleUpdatedListener(view);
     }
 }

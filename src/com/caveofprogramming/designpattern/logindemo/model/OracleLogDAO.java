@@ -9,6 +9,7 @@ import java.util.List;
  * abstracted using the {@code LogDAO} interface.
  */
 public class OracleLogDAO implements LogDAO{
+
     @Override
     public void addEntry(String message) {
 

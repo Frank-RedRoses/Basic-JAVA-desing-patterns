@@ -82,7 +82,11 @@ public class Person {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, password);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        return result;
     }
 
     @Override

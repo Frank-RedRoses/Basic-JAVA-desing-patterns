@@ -9,17 +9,25 @@ import java.util.List;
  * abstracted using the {@code LogDAO} interface.
  */
 public class MySQLLogDAO implements LogDAO {
+    /*
+     *(non-Javadoc)
+     * @see LogDAO#addEntry(String) 
+     */
     @Override
     public void addEntry(String message) {
         // Not implemented
         // Get current time and log message to database
     }
 
+    /*
+     *(non-Javadoc)
+     * @see LogDAO#getEntries(int)
+     */
     @Override
     public List<Log> getEntries(int number) {
-        // Not implemented. Get lastest "number" log messages.
+        // Not implemented. Get latest "number" log messages.
         return null;
     }
 
-
+    // Maybe no need for update or delete in this case.
 }
