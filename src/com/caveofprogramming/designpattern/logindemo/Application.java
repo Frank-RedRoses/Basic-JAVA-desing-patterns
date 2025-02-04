@@ -19,8 +19,19 @@ import javax.swing.*;
  */
 public class Application {
 
+    // To Do:
+    // Update the list of people in the View to display new added person.
+    // The logic on the Model to save new data on the list to the database
+    // when the save button is click.
+
+
     public static void main(String[] args) {
         // This block of code from here is specific to Swing and not MVC pattern related.
+        /*
+         * This is the recommended way to create a Swing
+         * event dispatch thread -- i.e. to run a Swing
+         * program.
+         */
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -39,16 +50,56 @@ public class Application {
      * which, in this particular case, includes the data entered into a form.
       */
     private static void runApp() {
+        /*
+         * Create the model. It might seem artificial to have just
+         * one class named 'Model.' In some cases, you might not even
+         * need such a class. What's most important is having a package
+         * named 'model' (or something similar), where all your model-related
+         * code can reside, regardless of how many classes you include.
+         */
         Model model = new Model();
+
+        /*
+         * Once again, you'll likely have a 'view' package, rather than just
+         * a single 'View' class.
+         *
+         * The view typically listens to the model, though it's worth noting
+         * that some MVC implementations restrict the view from directly
+         * interacting with the model. In such cases, only the controller
+         * classes are allowed to interact with the model classes.
+         */
         View view = new View(model);    // The Model listens to the View.
-        /* The controller send commands to both the View and the Model. It almost certainly
-         * listens to the View, but may or may not listen to the Model. In this case, the code is
-         * likely to listen to the Model. */
+
+        /*
+         * Finally, the controller should be a package as well, and you
+         * may have multiple controllers, a single controller with many
+         * sub-controllers, or other variations. For many applications,
+         * there will be just one controller that handles routing all messages.
+         * It listens to both the view and model, and instructs them on
+         * what actions to take.
+         */
         Controller controller = new Controller(view, model);
+        /* Something to point out is that the Controller almost certainly
+         * listens to the View, but may or may not listen to the Model.
+         * In this app, it sends commands to both the View and the Model.
+         * */
 
         // Implementation of the Observer pattern
-        view.setLoginListener(controller);
-        /* The controller is abstracted behind an interface, ensuring that the View and the Controller
-         * are not tightly coupled. */
+        view.setCreateUserListener(controller);
+        view.setSaveListener(controller);
+        view.setAppListener(controller);
+        /* The controller is abstracted behind an interface, ensuring that
+         * the View and the Controller are not tightly coupled.
+         */
+
+        /*
+         * In this implementation of MVC, the view listens to the model
+         * and updates itself when the model changes. However, some
+         * argue that the view should not directly interact with the
+         * model. Instead, the controller should listen to the model
+         * and instruct the view to update by calling methods within
+         * the view package.
+         */
+        model.setPeopleUpdatedListener(view);
     }
 }

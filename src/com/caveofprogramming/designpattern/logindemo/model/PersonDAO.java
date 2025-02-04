@@ -13,6 +13,7 @@ import java.util.List;
  * and only interacts with the appropriate {@code PersonDAO} based on the required database.
  */
 public interface PersonDAO {
+
     int addPerson(Person person) throws SQLException;
 
     Person getPerson(int id) throws SQLException;

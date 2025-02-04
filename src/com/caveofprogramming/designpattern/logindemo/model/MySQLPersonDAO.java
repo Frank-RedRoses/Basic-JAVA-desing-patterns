@@ -26,12 +26,14 @@ public class MySQLPersonDAO implements PersonDAO {
      * @param person {@code Person} object that contains the data of a person.
      * @return either (1) the row count for SQL Data Manipulation Language (DML)
      * statements or (2) 0 for SQL statements that return nothing.
+     * @see PersonDAO#addPerson(Person)
      */
     @Override
     public int addPerson(Person person) throws SQLException {
         Connection conn = Database.getInstance().getConnection(); // from the Singleton pattern.
 
-        PreparedStatement p = conn.prepareStatement("INSERT INTO people (name, password) values (?, ?)");
+        PreparedStatement p = conn
+                .prepareStatement("INSERT INTO people (name, password) values (?, ?)");
 
         p.setString(1, person.getName());
         p.setString(2, person.getPassword());
@@ -47,7 +49,9 @@ public class MySQLPersonDAO implements PersonDAO {
      * Retrieves a {@code Person} data from the database using the given {@code id}.
      *
      * @param id The id of the {@code Person} in the database.
-     * @return
+     * @return a {@code Person} instance containing the data of database entry
+     * with the given {@code id}.
+     * @see PersonDAO#getPerson(int)
      */
     @Override
     public Person getPerson(int id) throws SQLException {
@@ -83,6 +87,7 @@ public class MySQLPersonDAO implements PersonDAO {
      * @return returns a list with all the people in the database order by id.
      * @throws SQLException if a database access error occurs or this method
      * is called on a closed connection
+     * @see PersonDAO#getPeople()
      */
     @Override
     public List<Person> getPeople() throws SQLException {
@@ -113,11 +118,12 @@ public class MySQLPersonDAO implements PersonDAO {
     /**
      * Updates the record of the specified {@code Person} in the {@code People} table.
      *
-     * @param person The {@code Person} object holding the data to be updated.
+     * @param person The {@code Person} object holding the data to be updated in the database.
      * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
      * or (2) 0 for SQL statements that return nothing
      * @throws SQLException if a database access error occurs or this method
      * is called on a closed connection
+     * @see PersonDAO#updatePerson(Person)
      */
     @Override
     public int updatePerson(Person person) throws SQLException {
@@ -141,6 +147,7 @@ public class MySQLPersonDAO implements PersonDAO {
      * @param id id of the person to be deleted.
      * @throws SQLException if a database access error occurs or this method
      * is called on a closed connection
+     * @see PersonDAO#
      */
     @Override
     public int deletePerson(int id) throws SQLException {
@@ -163,6 +170,7 @@ public class MySQLPersonDAO implements PersonDAO {
      * or (2) 0 for SQL statements that return nothing
      * @throws SQLException if a database access error occurs or this method
      * is called on a closed connection
+     * @see PersonDAO#deleteAll()
      */
     @Override
     public int deleteAll() throws SQLException {

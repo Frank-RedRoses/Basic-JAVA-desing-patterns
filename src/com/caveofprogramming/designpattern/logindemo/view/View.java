@@ -1,14 +1,13 @@
 package com.caveofprogramming.designpattern.logindemo.view;
 
-import com.caveofprogramming.designpattern.logindemo.model.Database;
 import com.caveofprogramming.designpattern.logindemo.model.Model;
+import com.caveofprogramming.designpattern.logindemo.model.Person;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.util.List;
 
 /**
  * This class represent the view of our application. You would not necessarily call
@@ -17,15 +16,20 @@ import java.awt.event.WindowEvent;
  * The important concept is that this is the part of the code responsible for interacting
  * with the user.
  */
-public class View extends JFrame implements ActionListener {
+public class View extends JFrame implements ActionListener, PeopleUpdatedListener {
 
+    private static final long serialVersionUID = 1L;
     private final Model model;
     private final JTextField nameField;
     private final JPasswordField passField;
     private final JPasswordField repeatPassField;
-    private final JButton okButton;
+    private final JButton createUserButton;
+    private final JList<Person> userList;
+    private final DefaultListModel<Person> listModel;
 
-    private CreateUserListener loginListener;
+    private CreateUserListener createUserListener;
+    private SaveListener saveListener;
+    private AppListener appListener;
 
     /**
      * The {@code View} constructor receives a reference to the {@code Model}
@@ -36,13 +40,21 @@ public class View extends JFrame implements ActionListener {
     public View(Model model) {
         super("MVC Demo");  // The parent constructor (JFrame) accepts a title for the app.
         this.model = model;
+
         nameField = new JTextField(10);
         passField = new JPasswordField(10);
         repeatPassField = new JPasswordField(10);
-        okButton = new JButton("Create user");
+        createUserButton = new JButton("Create user");
+        listModel = new DefaultListModel<Person>();
+        userList = new JList<Person>(listModel);
+
+        int margin = 15;
+        Border outerBorder = BorderFactory.createEmptyBorder(margin, margin, margin, margin);
+        Border innerBorder = BorderFactory.createEtchedBorder();
 
         ////////////////////////////////////////////////////////////////////////////////////
         // This block of code leverages Swing to set up the application's windows Layout. //
+        userList.setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
         setLayout(new GridBagLayout());
 
         // Sets the layout parameters for the window view
@@ -114,56 +126,48 @@ public class View extends JFrame implements ActionListener {
         gc.weighty = 100;
         gc.fill = GridBagConstraints.NONE;
 
-        add(okButton, gc);
+        add(createUserButton, gc);
+
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.gridx = 1;
+        gc.gridy = 5;
+        gc.weightx = 1;
+        gc.weighty = 100;
+        gc.gridwidth = 2;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+
+        // add to the GUI the JScrollPane that will display the userList element
+        add(new JScrollPane(userList), gc);
 
         //// Implementation of the Observer Pattern: an example involving buttons ////
-        okButton.addActionListener(this); // The View itself listens to the okButton
-        /*
-        * - Pass an instance that implements ActionListener interface.
-        * - The verb "add" implies the existence of a collection, in this case, a list
-        * of listeners for each button. In contrast, the verb "set" suggest that only a
-        * single listener is assigned.
-        * - These methods are unaware that "this" refers to the view. They only know that
-        * the provided reference implements the actionPerformed(ActionEvent e) method.
-        */
+        createUserButton.addActionListener(this); // Assign the View itself to listen to the okButton
+        /* Notes:
+         * - Pass an instance that implements ActionListener interface.
+         * - The verb "add" implies the existence of a collection, in this case, a list
+         * of listeners for each button. In contrast, the verb "set" suggest that only a
+         * single listener is assigned.
+         * - addActionListener() methods are unaware that "this" refers to the view.
+         * They only know that the provided reference implements the
+         * actionPerformed(ActionEvent e) method.
+         */
 
-        /* **************** Singleton pattern ************************ */
-        // Database db = new Database();  "new" keyword cannot be used by external classes to create instances.
-        // This is how to access an instance when using the Singleton pattern:
-        // Database db = Database.getInstance();   // But, adds Global variable disadvantage
-        // Other option is to use static methods:
+        // This part of the code start the first interaction with the database
         addWindowListener(new WindowAdapter() {
-            // At opening and closing events from the window application
+            // At opening and closing events from the window application do:
             @Override
             public void windowOpened(WindowEvent e) {
-                try {
-                    Database.getInstance().connect();
-                } catch (Exception e1) {
-                    JOptionPane.showMessageDialog(View.this, "Unable to connect to the database",
-                            "Error", JOptionPane.WARNING_MESSAGE);
-                    e1.printStackTrace();
-                }
+                fireOpenEvent();
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                Database.getInstance().disconnect();
+                fireCloseEvent();
             }
         });
-        /*
-         * Whether you retrieve your database instance each timer or maintain
-         * single upfront reference depends on how often you need to use it.
-         * If you only use it a few times, it is better to rely on static methods.
-         * However, if you need to use your singleton in several places throughout
-         * your code, it is better to maintain an upfront reference.
-         *
-         * Another possibility is to use a connection pool, where you simply grab
-         * a connection from the pool,use it, and then release it back to the pool.
-         * The connection remains available in the pool for future use. This is an
-         * excellent way to manage connections if you are willing to handle the
-         * setup.
-         */
-        /* ************ End of Singleton pattern ******************* */
+
+        // Adds the Menu Bar with the "Save" item to the GUI Windows
+        JMenuBar menu = createMenu();
+        setJMenuBar(menu);
 
         setSize(600, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -171,11 +175,12 @@ public class View extends JFrame implements ActionListener {
         /////////////////// End of Swing code ///////////////////
     }
 
+
     /**
      * This method is defined in the ActionListener Interface and implemented here.
      * It is invoked by {@code JButton} when the user clicks the {@code okButton}.
      *
-     * @param e the event to be processed. A click, in this case.
+     * @param e the event to be processed. A button click, in this case.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -185,30 +190,146 @@ public class View extends JFrame implements ActionListener {
 
         if (password.equals(repeatPass)) {
             String name = nameField.getText();
-            fireLoginEvent(new CreateUserEvent(name, password));
-        } else {
-            JOptionPane.showMessageDialog(this, "Password does not match.",
-                    "Error", JOptionPane.WARNING_MESSAGE);
-        }
+            fireCreateUserEvent(new CreateUserEvent(name, password));
 
+            nameField.setText("");
+            passField.setText("");
+            repeatPassField.setText("");
+        } else {
+            showError("Password does not match");
+        }
     }
 
     /**
-     * This setter method accepts any class that implements the {@code LoginListener} interface
-     * and sets the {@code loginListener} field to point to the given instance of that class.
-     * The View is unaware of the specific type of the instance passed to this method; it only
-     * requires that the type implements the {@code loginPerform()} method.
+     * Shows given error on the View window as a warning message.
      *
-     * @param createUserListener A data type that implements the loginPerform() method.
+     * @param error a string error message.
      */
-    public void setLoginListener(CreateUserListener createUserListener) {
-        this.loginListener = createUserListener;
+    public void showError(String error) {
+        JOptionPane.showMessageDialog(
+                this,
+                error,
+                "Error",
+                JOptionPane.WARNING_MESSAGE);
     }
 
-    // Verifies the loginListener reference is good and performs the login.
-    private void fireLoginEvent(CreateUserEvent event) {
-        if (loginListener != null) {
-            loginListener.userCreated(event);
+    /**
+     * Creates a menu bar on the view that shows a "File" menu with a "Save" item.
+     *
+     * @return a JMenuBar instance containing a "Save" item.
+     */
+    public JMenuBar createMenu() {
+
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_S,
+                KeyEvent.CTRL_DOWN_MASK
+        ));
+        fileMenu.add(saveItem);
+        menuBar.add(fileMenu);
+        saveItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireSaveEvent();
+            }
+        });
+        return menuBar;
+    }
+
+    /**
+     * This setter method accepts any instance that implements the {@code CreateUserListener}
+     * interface and set it to {@code createUserListener} field in this class.
+     * <p>
+     * This allow the View to notify the listener when a user creation event occurs,
+     * without needing to know the specific implementation details of the listener.
+     * The View is unaware of the specific type of the instance passed to this method;
+     * it only requires that the instance implements the {@code onUserCreated()} method.
+     * </p>
+     *
+     * @param createUserListener an instance of a class that implements the {@code onUserCreated()}
+     *                           method that handles the user creation on the application.
+     */
+    public void setCreateUserListener(CreateUserListener createUserListener) {
+        this.createUserListener = createUserListener;
+    }
+
+    /**
+     * Sets the {@code saveListener} to the given instance of a class that
+     * implements the {@code SaveListener} interface.
+     * <p>
+     * This allows the view to notify the listener, in this example the {@code controller},
+     * when a save to database event occurs, without needing to know the specific details
+     * of the implementation
+     * </p>
+     *
+     * @param saveListener an instance of a class implementing {@code SaveListener}
+     *                     which handle the writing of new user to the database.
+     */
+    public void setSaveListener(SaveListener saveListener) {
+        this.saveListener = saveListener;
+    }
+
+    /**
+     * Sets the {@code appListener} to the given instance of a class that
+     * implements the {@code AppListener} interface
+     * <p>
+     * This allows the view to notify the listener, in this example the {@code controller},
+     * when a event like opening or closing the window GUI happens.
+     * </p>
+     *
+     * @param appListener an instance of a class implementation {@code AppListener}
+     *                    interface which handle what to do when the GUI window is
+     *                    open or close.
+     */
+    public void setAppListener(AppListener appListener) {
+        this.appListener = appListener;
+    }
+
+    // Verifies the createUserListener reference is not null.
+    // Calls the method that handles the user creation on the database.
+    private void fireCreateUserEvent(CreateUserEvent event) {
+        if (createUserListener != null) {
+            createUserListener.onUserCreated(event);
         }
+    }
+
+    // Calls the method that handles writing new users data to the database.
+    private void fireSaveEvent() {
+        if (saveListener != null) {
+            saveListener.onSave();
+        }
+    }
+
+    // runs onOpen() implementation on call
+    private void fireOpenEvent() {
+        if (appListener != null)
+            appListener.onOpen();
+    }
+
+    // runs onClose() implementation on call
+    private void fireCloseEvent() {
+        if (appListener != null)
+            appListener.onClose();
+    }
+
+    @Override
+    public void onPeopleListUpdated() {
+        /*
+         * Some interpretation of the MVC would force the view
+         * to be updated only through the controller, which would
+         * contact the database, get the data and tell to the view
+         * to update itself (by calling a view method directly).
+         * Others, as here, have the view listening to the model
+         * (but never telling it what to do)
+         */
+        listModel.clear();  // clear the list model of the GUI
+
+        // updates the list model in the GUI
+        List<Person> people = model.getPeople();
+        for (Person person : people)
+            listModel.addElement(person);
     }
 }

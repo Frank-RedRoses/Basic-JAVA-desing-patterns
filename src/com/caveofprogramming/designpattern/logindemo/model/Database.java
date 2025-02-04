@@ -78,7 +78,8 @@ public class Database {
             return;
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+//            Class.forName("com.mysql.jdbc.Driver"); // Deprecated
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new Exception("Driver not found");
         }

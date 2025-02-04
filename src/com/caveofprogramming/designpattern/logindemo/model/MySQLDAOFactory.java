@@ -12,6 +12,7 @@ public class MySQLDAOFactory extends DAOFactory {
      * it as an {@code PersonDAO} abstract class.
      *
      * @return new instance {@code MySQLPersonDAO} as a {@code PersonDAO}.
+     * @see DAOFactory#getPersonDAO()
      */
     @Override
     public PersonDAO getPersonDAO() {
@@ -22,6 +23,7 @@ public class MySQLDAOFactory extends DAOFactory {
      * Creates a new instance of {@code getLogDAO} abstract class.
      *
      * @return new {@code getLogDAO} instance.
+     * @see DAOFactory#getLogDAO()
      */
     @Override
     public LogDAO getLogDAO() {

@@ -11,6 +11,7 @@ import java.util.List;
  * and only interacts with the appropriate {@code LogDAO} based on the required database.
  */
 public interface LogDAO {
+
     void addEntry(String message);
 
     List<Log> getEntries(int number);
