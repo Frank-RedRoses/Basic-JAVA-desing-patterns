@@ -10,7 +10,7 @@ public class App {
         Logger logger = new Logger(logWriter);
         logger.write("Hello there");
 
-        /////////// Inheritance
+        /////////// Inheritance //////////
         LogWriter logWriter2 = new ConsoleLogWriter2();
 
         Logger logger2 = new Logger(logWriter2);
