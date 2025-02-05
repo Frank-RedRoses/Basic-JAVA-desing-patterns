@@ -4,19 +4,11 @@
 public class App {
 
     public static void main(String[] args) {
-        InputSystem input = new InputSystem();
-        GameObjects objects = new GameObjects();
-        GameConsole screen = new GameConsole();
+        Game game = new Game();
 
-        while(true) {
-            //Input
-            input.getInput();
-
-            // Update game objects (player, enemies, etc)
-            objects.update(input);
-
-            // Draw
-            screen.draw(objects);
+        // Game loop
+        while (true) {
+            game.update();
         }
     }
 }
